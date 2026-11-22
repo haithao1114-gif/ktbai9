@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài Kiểm Tra Trực Tuyến Tin Học 12 - Bài 9: Tạo Danh Sách & Bảng</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter & Fira Code -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .code-block { font-family: 'Fira Code', monospace; }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- APP CONTAINER -->
+  <div id="app">
+
+    <!-- 1. MODAL NHẬP THÔNG TIN HỌC SINH -->
+    <div id="startModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 transform transition-all border border-slate-100">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-sm">
+            <i class="fa-solid fa-laptop-code"></i>
+          </div>
+          <h1 class="text-2xl font-extrabold text-slate-900">BÀI KIỂM TRA TRỰC TUYẾN</h1>
+          <p class="text-sm font-semibold text-blue-600 uppercase tracking-wide mt-1">Môn Tin Học 12 - Bài 9: Tạo Danh Sách & Bảng</p>
+        </div>
+
+        <form id="studentForm" onsubmit="handleStartQuiz(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Họ và tên học sinh <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <input type="text" id="studentName" required placeholder="Ví dụ: Nguyễn Văn An"
+                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition font-medium">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Lớp học <span class="text-rose-500">*</span></label>
+            <div class="relative mb-2">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </span>
+              <input type="text" id="studentClass" required placeholder="Ví dụ: 12A1"
+                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition font-medium">
+            </div>
+            <!-- Gợi ý nhanh các lớp -->
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="text-xs text-slate-400 self-center mr-1">Chọn nhanh:</span>
+              <button type="button" onclick="selectClassQuick('12A1')" class="px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-blue-100 hover:text-blue-700 text-slate-600 rounded-lg transition">12A1</button>
+              <button type="button" onclick="selectClassQuick('12A2')" class="px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-blue-100 hover:text-blue-700 text-slate-600 rounded-lg transition">12A2</button>
+              <button type="button" onclick="selectClassQuick('12A3')" class="px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-blue-100 hover:text-blue-700 text-slate-600 rounded-lg transition">12A3</button>
+              <button type="button" onclick="selectClassQuick('12A4')" class="px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-blue-100 hover:text-blue-700 text-slate-600 rounded-lg transition">12A4</button>
+              <button type="button" onclick="selectClassQuick('12A5')" class="px-2.5 py-1 text-xs font-medium bg-slate-100 hover:bg-blue-100 hover:text-blue-700 text-slate-600 rounded-lg transition">12A5</button>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-100 rounded-xl p-3.5 text-xs text-blue-800 space-y-1">
+            <div class="font-bold flex items-center gap-1.5 text-blue-900">
+              <i class="fa-solid fa-circle-info"></i> Thông tin bài kiểm tra:
+            </div>
+            <p>• Số lượng: <strong>20 câu hỏi</strong> (Phần I: 16 câu MCQ, Phần II: 4 câu Đúng/Sai).</p>
+            <p>• Thời gian làm bài: <strong>30 phút</strong>.</p>
+            <p>• Hệ thống tự động chấm điểm và cung cấp lời giải chi tiết ngay khi nộp bài.</p>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition active:scale-[0.99] flex items-center justify-center gap-2">
+            <span>BẮT ĐẦU LÀM BÀI</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MAIN QUIZ INTERFACE (Nằm ẩn ban đầu) -->
+    <div id="quizInterface" class="hidden min-h-screen flex flex-col">
+
+      <!-- TOP STICKY BAR -->
+      <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          
+          <!-- Học sinh Info -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+              <div id="dispStudentName" class="font-bold text-slate-900 leading-tight">Học sinh</div>
+              <div id="dispStudentClass" class="text-xs text-slate-500 font-medium">Lớp: --</div>
+            </div>
+          </div>
+
+          <!-- Timer & Progress Bar Center -->
+          <div class="hidden md:flex items-center gap-6">
+            <!-- Timer Widget -->
+            <div id="timerContainer" class="flex items-center gap-2 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200">
+              <i class="fa-solid fa-clock text-blue-600"></i>
+              <span id="timerText" class="font-mono font-bold text-base text-slate-800">30:00</span>
+            </div>
+
+            <!-- Answer Progress -->
+            <div class="w-48">
+              <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                <span>Tiến độ</span>
+                <span id="progressCount">0/20 câu</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2">
+            <button onclick="confirmSubmitQuiz()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>NỘP BÀI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Timer & Progress Sub-bar -->
+        <div class="md:hidden border-t border-slate-100 px-4 py-2 bg-slate-50 flex items-center justify-between text-xs font-medium">
+          <div class="flex items-center gap-1.5 text-slate-700 font-bold">
+            <i class="fa-solid fa-clock text-blue-600"></i>
+            <span id="mobileTimerText" class="font-mono">30:00</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500">Tiến độ:</span>
+            <span id="mobileProgressCount" class="font-bold text-blue-600">0/20</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+          <!-- QUESTIONS LIST (Column 8/12) -->
+          <div class="lg:col-span-8 space-y-6">
+
+            <!-- BANNER PHẦN I -->
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-4 rounded-2xl shadow-md flex items-center justify-between">
+              <div>
+                <span class="inline-block px-2.5 py-0.5 bg-blue-500/30 border border-blue-400/30 text-blue-200 text-xs font-bold rounded-md mb-1">PHẦN I</span>
+                <h2 class="text-lg font-bold">CÂU HỎI TRẮC NGHIỆM KHÁCH QUAN (16 Câu)</h2>
+                <p class="text-xs text-blue-200 mt-0.5">Chọn một phương án trả lời đúng nhất cho mỗi câu hỏi.</p>
+              </div>
+              <div class="text-3xl opacity-30 px-2"><i class="fa-solid fa-list-check"></i></div>
+            </div>
+
+            <!-- PART 1 QUESTIONS CONTAINER -->
+            <div id="part1Container" class="space-y-6"></div>
+
+            <!-- BANNER PHẦN II -->
+            <div class="bg-gradient-to-r from-purple-900 to-indigo-900 text-white p-4 rounded-2xl shadow-md flex items-center justify-between mt-10">
+              <div>
+                <span class="inline-block px-2.5 py-0.5 bg-purple-500/30 border border-purple-400/30 text-purple-200 text-xs font-bold rounded-md mb-1">PHẦN II</span>
+                <h2 class="text-lg font-bold">CÂU HỎI ĐÚNG / SAI (4 Câu - 16 Ý)</h2>
+                <p class="text-xs text-purple-200 mt-0.5">Trong mỗi ý a), b), c), d) của từng câu, chọn ĐÚNG hoặc SAI.</p>
+              </div>
+              <div class="text-3xl opacity-30 px-2"><i class="fa-solid fa-toggle-on"></i></div>
+            </div>
+
+            <!-- PART 2 QUESTIONS CONTAINER -->
+            <div id="part2Container" class="space-y-6"></div>
+
+          </div>
+
+          <!-- SIDEBAR QUESTION NAVIGATOR (Column 4/12) -->
+          <div class="lg:col-span-4">
+            <div class="sticky top-20 space-y-4">
+
+              <!-- Grid số câu hỏi -->
+              <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                  <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-border-all text-blue-600"></i>
+                    DANH SÁCH CÂU HỎI
+                  </h3>
+                  <span class="text-xs text-slate-500 font-medium">20 câu</span>
+                </div>
+
+                <!-- Chú thích trạng thái -->
+                <div class="flex items-center gap-4 text-xs font-medium text-slate-600 mb-4 bg-slate-50 p-2.5 rounded-xl">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>
+                    <span>Chưa làm</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+                    <span>Đã làm</span>
+                  </div>
+                </div>
+
+                <!-- Label Part I -->
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Phần I: Trắc nghiệm</div>
+                <div id="navGridPart1" class="grid grid-cols-4 gap-2 mb-4"></div>
+
+                <!-- Label Part II -->
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Phần II: Đúng/Sai</div>
+                <div id="navGridPart2" class="grid grid-cols-4 gap-2"></div>
+              </div>
+
+              <!-- Quick Submit Box -->
+              <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 shadow-lg">
+                <div class="font-bold text-base mb-1">Hoàn thành bài thi?</div>
+                <p class="text-xs text-slate-300 mb-4">Hãy kiểm tra kỹ toàn bộ các câu hỏi trước khi nhấn nộp bài.</p>
+                <button onclick="confirmSubmitQuiz()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>NỘP BÀI KIỂM TRA</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- 3. MODAL KẾT QUẢ VÀ ĐÁP ÁN CHI TIẾT -->
+    <div id="resultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md overflow-y-auto">
+      <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full my-8 overflow-hidden border border-slate-100 transform transition-all">
+        
+        <!-- Header Kết Quả -->
+        <div id="resultHeaderBg" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 md:p-8 text-center relative">
+          <div class="inline-block p-3 bg-white/10 rounded-full mb-3 backdrop-blur-sm">
+            <i class="fa-solid fa-trophy text-amber-300 text-3xl"></i>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-extrabold">KẾT QUẢ BÀI KIỂM TRA</h2>
+          <p class="text-blue-100 text-sm mt-1">Bài 9: Tạo Danh Sách & Bảng (HTML)</p>
+          
+          <!-- Thông tin sinh viên & Điểm số lớn -->
+          <div class="mt-6 bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/20 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+            <div class="text-center md:text-left">
+              <div id="resStudentName" class="font-bold text-lg text-white">--</div>
+              <div id="resStudentClass" class="text-xs text-blue-200">Lớp: --</div>
+              <div id="resTimeSpent" class="text-xs text-blue-200 mt-1"><i class="fa-solid fa-stopwatch mr-1"></i>Thời gian: --</div>
+            </div>
+            
+            <div class="text-center bg-white text-slate-900 py-3 px-4 rounded-xl shadow-lg">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tổng Điểm Số</div>
+              <div id="resScoreText" class="text-4xl font-extrabold text-blue-600 my-0.5">0.0</div>
+              <div id="resRankBadge" class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">--</div>
+            </div>
+
+            <div class="text-center md:text-right space-y-1 text-xs">
+              <div class="text-blue-100">Phần I (MCQ): <strong id="resPart1Score" class="text-white text-sm">0/6.0</strong></div>
+              <div class="text-blue-100">Phần II (Đ/S): <strong id="resPart2Score" class="text-white text-sm">0/4.0</strong></div>
+              <div class="text-blue-200 pt-1 border-t border-white/10">Số câu làm đúng: <strong id="resCorrectCount" class="text-amber-300 text-sm">0/20</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons Bar -->
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-blue-600"></i>
+            <span>BẢNG ĐỐI CHIẾU VÀ LỜI GIẢI CHI TIẾT</span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="copyResultsToClipboard()" class="flex-1 sm:flex-initial px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-copy"></i>
+              <span>Sao chép kết quả</span>
+            </button>
+            <button onclick="retakeQuiz()" class="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>Làm lại bài</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Detail Explanation Container -->
+        <div class="p-6 max-h-[50vh] overflow-y-auto space-y-6" id="detailReviewContainer"></div>
+
+        <!-- Footer Modal -->
+        <div class="p-4 bg-slate-100 text-center text-xs text-slate-500 font-medium border-t border-slate-200">
+          Ứng dụng kiểm tra trực tuyến Tin học 12 - Thiết kế bám sát SGK Kết nối tri thức với cuộc sống.
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toastMsg">Thông báo</span>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT XỬ LÝ DỮ LIỆU VÀ GIAO DIỆN -->
+  <script>
+    // DỮ LIỆU CÂU HỎI PHẦN I (16 CÂU TRẮC NGHIỆM)
+    const questionsPart1 = [
+      {
+        id: 1,
+        level: "Nhận biết",
+        text: "Trong HTML, cặp thẻ nào dùng để tạo danh sách có thứ tự?",
+        code: null,
+        options: [
+          { key: "A", text: "<ul>...</ul>" },
+          { key: "B", text: "<ol>...</ol>" },
+          { key: "C", text: "<dl>...</dl>" },
+          { key: "D", text: "<li>...</li>" }
+        ],
+        correct: "B",
+        explain: "Cặp thẻ <ol>...</ol> (Ordered List) được dùng để tạo danh sách có thứ tự."
+      },
+      {
+        id: 2,
+        level: "Nhận biết",
+        text: "Thẻ nào dùng để xác định từng mục trong danh sách có thứ tự hoặc danh sách không có thứ tự?",
+        code: null,
+        options: [
+          { key: "A", text: "<tr>" },
+          { key: "B", text: "<dt>" },
+          { key: "C", text: "<li>" },
+          { key: "D", text: "<dd>" }
+        ],
+        correct: "C",
+        explain: "Thẻ <li> (List Item) được dùng để xác định từng mục hiển thị trong danh sách <ol> hoặc <ul>."
+      },
+      {
+        id: 3,
+        level: "Nhận biết",
+        text: "Để tạo danh sách mô tả, HTML sử dụng bộ ba thẻ nào?",
+        code: null,
+        options: [
+          { key: "A", text: "<table>, <tr>, <td>" },
+          { key: "B", text: "<ul>, <ol>, <li>" },
+          { key: "C", text: "<dl>, <dt>, <dd>" },
+          { key: "D", text: "<caption>, <th>, <td>" }
+        ],
+        correct: "C",
+        explain: "Danh sách mô tả (Description List) được tạo từ bộ ba thẻ: <dl> (danh sách), <dt> (tên mục/thuật ngữ), và <dd> (nội dung mô tả)."
+      },
+      {
+        id: 4,
+        level: "Nhận biết",
+        text: "Trong cấu trúc bảng HTML, thẻ nào dùng để tạo một hàng của bảng?",
+        code: null,
+        options: [
+          { key: "A", text: "<table>" },
+          { key: "B", text: "<tr>" },
+          { key: "C", text: "<td>" },
+          { key: "D", text: "<th>" }
+        ],
+        correct: "B",
+        explain: "Thẻ <tr> (Table Row) dùng để định nghĩa một hàng chứa các ô dữ liệu trong bảng."
+      },
+      {
+        id: 5,
+        level: "Nhận biết",
+        text: "Thẻ nào dùng để tạo ô tiêu đề cho bảng trong HTML?",
+        code: null,
+        options: [
+          { key: "A", text: "<th>" },
+          { key: "B", text: "<td>" },
+          { key: "C", text: "<tr>" },
+          { key: "D", text: "<caption>" }
+        ],
+        correct: "A",
+        explain: "Thẻ <th> (Table Header) được dùng để tạo các ô tiêu đề (chữ sẽ tự động in đậm và căn giữa)."
+      },
+      {
+        id: 6,
+        level: "Nhận biết",
+        text: "Để thêm tiêu đề cho bảng, thẻ <caption> phải được đặt ở vị trí nào?",
+        code: null,
+        options: [
+          { key: "A", text: "Sau thẻ </table>" },
+          { key: "B", text: "Ngay sau thẻ <table> và trước thẻ <tr> đầu tiên" },
+          { key: "C", text: "Bên trong thẻ <tr> đầu tiên" },
+          { key: "D", text: "Sau thẻ </tr> cuối cùng" }
+        ],
+        correct: "B",
+        explain: "Theo chuẩn cú pháp HTML, thẻ <caption> phải đặt ngay sau thẻ mở <table> và đứng trước thẻ <tr> đầu tiên."
+      },
+      {
+        id: 7,
+        level: "Nhận biết",
+        text: "Trong thuộc tính type của thẻ <ol>, giá trị nào dùng để đánh số thứ tự bằng chữ số La Mã viết hoa?",
+        code: null,
+        options: [
+          { key: "A", text: '"1"' },
+          { key: "B", text: '"A"' },
+          { key: "C", text: '"I"' },
+          { key: "D", text: '"i"' }
+        ],
+        correct: "C",
+        explain: 'Giá trị type="I" đánh số thứ tự bằng chữ số La Mã hoa (I, II, III...). ("i" dùng cho La Mã thường).'
+      },
+      {
+        id: 8,
+        level: "Nhận biết",
+        text: "Thuộc tính nào dùng để quy định số hàng mà một ô (<th> hoặc <td>) sẽ gộp?",
+        code: null,
+        options: [
+          { key: "A", text: "colspan" },
+          { key: "B", text: "rowspan" },
+          { key: "C", text: "start" },
+          { key: "D", text: "type" }
+        ],
+        correct: "B",
+        explain: "Thuộc tính rowspan (row span) quy định số hàng gộp lại thành 1 ô. Thuộc tính colspan gộp nhiều cột."
+      },
+      {
+        id: 9,
+        level: "Thông hiểu",
+        text: "Khi muốn tạo danh sách không có thứ tự sử dụng kí tự đầu dòng là hình vuông, ta thiết lập đúng thuộc tính nào sau đây?",
+        code: null,
+        options: [
+          { key: "A", text: '<ul style="list-style-type: square">' },
+          { key: "B", text: '<ul type="square">' },
+          { key: "C", text: '<ol style="list-style-type: square">' },
+          { key: "D", text: '<dl style="list-style-type: square">' }
+        ],
+        correct: "A",
+        explain: 'Trong HTML5, ký tự đầu dòng của <ul> được thiết lập qua thuộc tính CSS: style="list-style-type: square".'
+      },
+      {
+        id: 10,
+        level: "Thông hiểu",
+        text: 'Khi thiết lập rowspan="3" cho một ô ở hàng hiện tại, đối với các hàng tiếp theo cần thực hiện thao tác gì ở vị trí tương ứng?',
+        code: null,
+        options: [
+          { key: "A", text: "Thêm các thẻ <td> trống để giữ số cột" },
+          { key: "B", text: "Bỏ qua cặp thẻ <th> hoặc <td> tại vị trí tương ứng ở hai hàng tiếp theo" },
+          { key: "C", text: "Lặp lại đúng nội dung của ô đã gộp ở hai hàng tiếp theo" },
+          { key: "D", text: 'Đặt colspan="3" cho các ô ở hai hàng tiếp theo' }
+        ],
+        correct: "B",
+        explain: "Ô gộp 3 hàng (rowspan=\"3\") đã chiếm chỗ ở 2 hàng kế tiếp, nên bắt buộc phải bỏ qua cặp thẻ <td>/<th> tương ứng ở 2 hàng đó."
+      },
+      {
+        id: 11,
+        level: "Thông hiểu",
+        text: "Tại sao tài liệu khuyến cáo không nên đặt kích thước bảng theo đơn vị px?",
+        code: null,
+        options: [
+          { key: "A", text: "Vì px không thể dùng cho thẻ <table> và <tr>" },
+          { key: "B", text: "Vì sự khác nhau về kích thước và số điểm ảnh của các thiết bị hiển thị có thể làm bảng hiển thị không đúng như mong đợi" },
+          { key: "C", text: "Vì đơn vị px chỉ áp dụng cho danh sách <ol> và <ul>" },
+          { key: "D", text: "Vì trình duyệt HTML5 không hỗ trợ đơn vị px" }
+        ],
+        correct: "B",
+        explain: "Do thiết bị hiển thị (điện thoại, máy tính) có độ phân giải và kích thước khác nhau, dùng đơn vị cố định px dễ làm bảng bị vỡ khung hoặc tràn màn hình."
+      },
+      {
+        id: 12,
+        level: "Thông hiểu",
+        text: "Vì sao trong thiết kế web hiện đại, người ta thường dùng CSS để tạo bố cục thay vì dùng bảng?",
+        code: null,
+        options: [
+          { key: "A", text: "Vì thẻ <table> đã bị loại bỏ trong HTML5" },
+          { key: "B", text: "Vì sử dụng bảng để tạo bố cục tương đối phức tạp" },
+          { key: "C", text: "Vì bảng không thể chứa dữ liệu dạng chữ" },
+          { key: "D", text: "Vì bảng không thể điều chỉnh độ rộng và chiều cao" }
+        ],
+        correct: "B",
+        explain: "Tạo bố cục web bằng thẻ <table> gây phức tạp mã nguồn, thiếu tính linh hoạt và khó bảo trì so với việc sử dụng CSS (Flexbox/Grid)."
+      },
+      {
+        id: 13,
+        level: "Thông hiểu",
+        text: "Muốn tạo một danh sách lồng nhau trong HTML, danh sách con phải được đặt ở đâu?",
+        code: null,
+        options: [
+          { key: "A", text: "Ngay sau thẻ đóng của danh sách cha" },
+          { key: "B", text: "Bên trong cụm thẻ <li>...</li> của mục tương ứng thuộc danh sách cha" },
+          { key: "C", text: "Bên trong thẻ <caption>" },
+          { key: "D", text: "Tách riêng thành một tệp HTML khác" }
+        ],
+        correct: "B",
+        explain: "Để lồng danh sách, danh sách con phải được đặt lồng hoàn toàn bên trong cặp thẻ <li>...</li> của một mục thuộc danh sách cha."
+      },
+      {
+        id: 14,
+        level: "Vận dụng",
+        text: "Để tạo danh sách có thứ tự bắt đầu bằng chữ số 5 và đánh số theo kiểu số thường (1, 2, 3...), đoạn mã nào đúng?",
+        code: null,
+        options: [
+          { key: "A", text: '<ol type="1" start="5">' },
+          { key: "B", text: '<ol type="5" start="1">' },
+          { key: "C", text: '<ol value="5" type="1">' },
+          { key: "D", text: '<ol begin="5" style="1">' }
+        ],
+        correct: "A",
+        explain: 'Thuộc tính type="1" chọn kiểu số thường Ả Rập và start="5" chỉ định số thứ tự bắt đầu đánh từ giá trị 5.'
+      },
+      {
+        id: 15,
+        level: "Vận dụng",
+        text: "Một bảng cần một ô tiêu đề ở hàng đầu tiên trải rộng trên 4 cột. Thuộc tính nào cần thêm vào thẻ <th> đó?",
+        code: null,
+        options: [
+          { key: "A", text: 'rowspan="4"' },
+          { key: "B", text: 'colspan="4"' },
+          { key: "C", text: 'span="4"' },
+          { key: "D", text: 'width="4"' }
+        ],
+        correct: "B",
+        explain: 'Thuộc tính colspan="4" trải rộng ô tiêu đề qua 4 cột liên tiếp trên cùng một hàng.'
+      },
+      {
+        id: 16,
+        level: "Vận dụng",
+        text: "Khi trình bày thông tin bán hàng của lớp gồm các cột: Món ăn, Đơn giá, Số lượng, Thành tiền, cách biểu diễn nào phù hợp nhất?",
+        code: null,
+        options: [
+          { key: "A", text: "Danh sách không có thứ tự <ul>" },
+          { key: "B", text: "Danh sách mô tả <dl>" },
+          { key: "C", text: "Bảng <table> gồm các hàng <tr> và ô dữ liệu <td>" },
+          { key: "D", text: "Danh sách có thứ tự <ol>" }
+        ],
+        correct: "C",
+        explain: "Dữ liệu đa chiều gồm nhiều thuộc tính kết hợp (Món ăn, Đơn giá, SL, Thành tiền) biểu diễn dạng hàng và cột bằng <table> là tối ưu nhất."
+      }
+    ];
+
+    // DỮ LIỆU CÂU HỎI PHẦN II (4 CÂU ĐÚNG / SAI)
+    const questionsPart2 = [
+      {
+        id: 17,
+        title: "Câu 17. Cho đoạn mã liệt kê thuật ngữ ẩm thực:",
+        code: `<dl>\n  <dt><b>Kem</b></dt>\n  <dd>Món ăn ngọt, ở dạng đông lạnh.</dd>\n  <dt><b>Trà sữa</b></dt>\n  <dd>Đồ uống làm từ hai nguyên liệu trà và sữa.</dd>\n</dl>`,
+        items: [
+          { key: "a", text: "Danh sách trên là dạng danh sách mô tả.", correct: true, level: "Biết", explain: "Đúng. Thẻ <dl> (Description List) được dùng để định nghĩa danh sách mô tả." },
+          { key: "b", text: "Thẻ <dd> dùng để khai báo tên mục/thuật ngữ cần mô tả.", correct: false, level: "Biết", explain: "Sai. Thẻ <dt> (Definition Term) mới dùng để khai báo tên mục/thuật ngữ; thẻ <dd> (Definition Description) dùng để ghi nội dung mô tả." },
+          { key: "c", text: "Có thể lồng một danh sách có thứ tự <ol> vào bên trong phần mô tả của một mục.", correct: true, level: "Hiểu", explain: "Đúng. Thẻ <dd> là thẻ chứa nội dung, có thể lồng danh sách <ol> hoặc <ul> để trình bày chi tiết." },
+          { key: "d", text: "Nếu thay <dl> bằng <ul> mà giữ nguyên <dt> và <dd>, trình duyệt vẫn hiển thị đúng cấu trúc danh sách mô tả chuẩn.", correct: false, level: "Vận dụng", explain: "Sai. Cấu trúc <ul> chỉ chấp nhận các thẻ con trực tiếp là <li>, việc thay thế này vi phạm cú pháp ngữ nghĩa chuẩn của HTML." }
+        ]
+      },
+      {
+        id: 18,
+        title: "Câu 18. Trang web quản lý điểm thi có hàng tiêu đề gồm cột Họ và tên (gộp 2 hàng) và nhóm cột Điểm thi (gồm 3 môn: Toán, Vật lí, Hoá học):",
+        code: null,
+        items: [
+          { key: "a", text: "Thẻ <th> dùng để tạo ô tiêu đề, còn thẻ <td> dùng để tạo ô dữ liệu.", correct: true, level: "Biết", explain: "Đúng. Thẻ <th> dùng cho ô tiêu đề bảng, thẻ <td> dùng cho ô chứa dữ liệu thông thường." },
+          { key: "b", text: 'Ô Điểm thi nằm phía trên 3 cột môn học cần dùng thuộc tính colspan="3".', correct: true, level: "Hiểu", explain: 'Đúng. Ô "Điểm thi" gộp 3 cột môn học bên dưới nên sử dụng thuộc tính colspan="3".' },
+          { key: "c", text: "Việc gộp ô bằng rowspan và colspan giúp kiểm soát số lượng ô trong bảng dễ dàng hơn so với bảng thông thường.", correct: false, level: "Hiểu", explain: "Sai. Tài liệu đã chỉ rõ việc gộp ô giúp tạo bảng phức tạp nhưng cũng làm cho việc đánh dấu, theo dõi và kiểm soát số lượng ô trở nên khó khăn hơn." },
+          { key: "d", text: 'Khi gộp 2 hàng cho ô Họ và tên (rowspan="2"), ở hàng thứ hai không cần viết lại ô <th> hoặc <td> cho vị trí cột Họ và tên.', correct: true, level: "Vận dụng", explain: "Đúng. Ô ở hàng 1 đã gộp chiếm không gian của hàng 2, nên hàng 2 phải bỏ qua thẻ ô ở vị trí đó." }
+        ]
+      },
+      {
+        id: 19,
+        title: "Câu 19. Định dạng bảng và danh sách trong HTML5 bằng thuộc tính style:",
+        code: null,
+        items: [
+          { key: "a", text: "Thuộc tính style có thể được sử dụng để định dạng đường viền và kích thước cho bảng.", correct: true, level: "Biết", explain: "Đúng. Thuộc tính style được dùng để thiết lập CSS như viền (border), chiều rộng (width), chiều cao (height)." },
+          { key: "b", text: 'Trong giá trị của thuộc tính con border thuộc style (dạng "độ_dày_theo_px kiểu_viền [màu_viền]"), kiểu viền có thể là solid, dotted, double hoặc none.', correct: true, level: "Biết", explain: "Đúng. Đó là 4 giá trị chuẩn của kiểu viền trong CSS." },
+          { key: "c", text: "Kích thước phần tử trong style chỉ có thể viết theo đơn vị phần trăm %.", correct: false, level: "Hiểu", explain: "Sai. Kích thước có thể đặt theo phần trăm (%) hoặc điểm ảnh (px)." },
+          { key: "d", text: 'Nếu thiết lập style="width:80%" cho bảng và style="width:10%" cho một ô trong hàng, độ rộng của ô đó bằng 10% độ rộng của bảng.', correct: true, level: "Vận dụng", explain: "Đúng. Kích thước % của ô con được tính dựa trên độ rộng của phần tử bao ngoài (là bảng)." }
+        ]
+      },
+      {
+        id: 20,
+        title: "Câu 20. Thực hành tạo danh sách câu lạc bộ và lịch hoạt động câu lạc bộ của trường:",
+        code: null,
+        items: [
+          { key: "a", text: "Tiêu đề lớn của trang danh sách câu lạc bộ có thể tạo bằng cặp thẻ <h2>...</h2>.", correct: true, level: "Biết", explain: "Đúng. Thẻ <h2> dùng để tạo tiêu đề mục của trang web." },
+          { key: "b", text: "Danh sách câu lạc bộ có thể kết hợp danh sách không có thứ tự <ul> ở cấp ngoài và danh sách có thứ tự <ol> ở cấp bên trong.", correct: true, level: "Biết", explain: "Đúng. Đây là kĩ thuật tạo danh sách lồng nhau (nested list)." },
+          { key: "c", text: 'Trong bảng lịch hoạt động có tiêu đề là "Lịch hoạt động CLB Thể thao", thẻ <caption> đặt ngay sau thẻ <table>.', correct: true, level: "Hiểu", explain: "Đúng. Thẻ <caption> quy định tiêu đề bảng và bắt buộc đặt ngay sau thẻ <table>." },
+          { key: "d", text: "Nếu một bảng có 7 hàng và 7 cột, mọi hàng đều bắt buộc phải có đúng 7 thẻ <td> hoặc <th> ngay cả khi có gộp hàng và gộp cột.", correct: false, level: "Vận dụng", explain: "Sai. Khi có gộp hàng (rowspan) hoặc gộp cột (colspan), số lượng thẻ <td>/<th> trong các hàng liên quan sẽ giảm đi tương ứng." }
+        ]
+      }
+    ];
+
+    // TRẠNG THÁI ỨNG DỤNG
+    let studentInfo = { name: "", class: "" };
+    let userAnswersPart1 = {}; // { 1: "B", 2: "C", ... }
+    let userAnswersPart2 = {}; // { "17_a": true, "17_b": false, ... }
+    let timerInterval = null;
+    let timeRemaining = 30 * 60; // 30 phút tính theo giây
+    let quizSubmitted = false;
+
+    // Gợi ý chọn lớp nhanh
+    function selectClassQuick(className) {
+      document.getElementById('studentClass').value = className;
+    }
+
+    // Bắt đầu làm bài
+    function handleStartQuiz(e) {
+      e.preventDefault();
+      const name = document.getElementById('studentName').value.trim();
+      const cls = document.getElementById('studentClass').value.trim();
+
+      if (!name || !cls) {
+        showToast("Vui lòng nhập đầy đủ Họ tên và Lớp!", "error");
+        return;
+      }
+
+      studentInfo.name = name;
+      studentInfo.class = cls;
+
+      document.getElementById('dispStudentName').textContent = name;
+      document.getElementById('dispStudentClass').textContent = `Lớp: ${cls}`;
+
+      // Ẩn modal, hiện ứng dụng
+      document.getElementById('startModal').classList.add('hidden');
+      document.getElementById('quizInterface').classList.remove('hidden');
+
+      // Khởi tạo các phần
+      renderPart1();
+      renderPart2();
+      renderNavGrid();
+      startTimer();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render các câu hỏi Phần I
+    function renderPart1() {
+      const container = document.getElementById('part1Container');
+      container.innerHTML = questionsPart1.map((q, idx) => {
+        const badgeColor = q.level === "Nhận biết" ? "bg-blue-100 text-blue-800" :
+                           q.level === "Thông hiểu" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800";
+        return `
+          <div id="card-q${q.id}" class="bg-white rounded-2xl p-5 md:p-6 border border-slate-200 shadow-sm transition hover:border-blue-200">
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center text-sm">${q.id}</span>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeColor}">${q.level}</span>
+              </div>
+              <span id="status-badge-${q.id}" class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">Chưa chọn</span>
+            </div>
+
+            <p class="font-semibold text-slate-900 text-base mb-3 leading-relaxed">${escapeHtml(q.text)}</p>
+
+            ${q.code ? `
+              <div class="bg-slate-900 text-emerald-400 p-4 rounded-xl code-block text-xs md:text-sm mb-4 overflow-x-auto shadow-inner border border-slate-800">
+                <pre><code>${escapeHtml(q.code)}</code></pre>
+              </div>
+            ` : ''}
+
+            <!-- Các đáp án -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${q.options.map(opt => `
+                <button type="button" onclick="selectPart1Option(${q.id}, '${opt.key}')" 
+                  id="opt-${q.id}-${opt.key}"
+                  class="opt-btn-${q.id} text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 transition flex items-start gap-3 text-sm font-medium">
+                  <span class="opt-key w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">${opt.key}</span>
+                  <span class="text-slate-800 leading-snug">${escapeHtml(opt.text)}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render các câu hỏi Phần II
+    function renderPart2() {
+      const container = document.getElementById('part2Container');
+      container.innerHTML = questionsPart2.map((q) => {
+        return `
+          <div id="card-q${q.id}" class="bg-white rounded-2xl p-5 md:p-6 border border-slate-200 shadow-sm transition hover:border-purple-200">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-8 h-8 rounded-xl bg-purple-600 text-white font-bold flex items-center justify-center text-sm">${q.id}</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-800">Đúng / Sai</span>
+            </div>
+
+            <p class="font-bold text-slate-900 text-base mb-2 leading-relaxed">${escapeHtml(q.title)}</p>
+
+            ${q.code ? `
+              <div class="bg-slate-900 text-emerald-400 p-4 rounded-xl code-block text-xs md:text-sm mb-4 overflow-x-auto shadow-inner border border-slate-800">
+                <pre><code>${escapeHtml(q.code)}</code></pre>
+              </div>
+            ` : ''}
+
+            <!-- Danh sách 4 ý a, b, c, d -->
+            <div class="space-y-3 mt-4">
+              ${q.items.map(item => `
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="flex items-start gap-2.5 text-sm font-medium text-slate-800">
+                    <span class="font-bold text-purple-700 uppercase">${item.key})</span>
+                    <span>${escapeHtml(item.text)}</span>
+                  </div>
+                  
+                  <!-- Toggle chọn Đúng / Sai -->
+                  <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                    <button type="button" onclick="selectPart2Option(${q.id}, '${item.key}', true)"
+                      id="tf-${q.id}-${item.key}-true"
+                      class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-600 hover:bg-emerald-50 hover:border-emerald-400 transition flex items-center gap-1">
+                      <i class="fa-solid fa-check text-emerald-600"></i> Đúng
+                    </button>
+                    <button type="button" onclick="selectPart2Option(${q.id}, '${item.key}', false)"
+                      id="tf-${q.id}-${item.key}-false"
+                      class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-600 hover:bg-rose-50 hover:border-rose-400 transition flex items-center gap-1">
+                      <i class="fa-solid fa-xmark text-rose-600"></i> Sai
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render lưới ô vuông chuyển nhanh câu hỏi
+    function renderNavGrid() {
+      const grid1 = document.getElementById('navGridPart1');
+      const grid2 = document.getElementById('navGridPart2');
+
+      grid1.innerHTML = questionsPart1.map(q => `
+        <button type="button" onclick="scrollToQuestion(${q.id})" id="nav-q${q.id}"
+          class="h-9 rounded-xl font-bold text-xs bg-slate-100 text-slate-700 hover:bg-blue-100 hover:text-blue-700 transition flex items-center justify-center border border-slate-200">
+          ${q.id}
+        </button>
+      `).join('');
+
+      grid2.innerHTML = questionsPart2.map(q => `
+        <button type="button" onclick="scrollToQuestion(${q.id})" id="nav-q${q.id}"
+          class="h-9 rounded-xl font-bold text-xs bg-slate-100 text-slate-700 hover:bg-purple-100 hover:text-purple-700 transition flex items-center justify-center border border-slate-200">
+          ${q.id}
+        </button>
+      `).join('');
+    }
+
+    // Chọn đáp án Phần I
+    function selectPart1Option(qId, key) {
+      if (quizSubmitted) return;
+      userAnswersPart1[qId] = key;
+
+      // Update UI button options
+      document.querySelectorAll(`.opt-btn-${qId}`).forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+        btn.classList.add('bg-white', 'text-slate-800', 'border-slate-200');
+        const kSpan = btn.querySelector('.opt-key');
+        if (kSpan) {
+          kSpan.classList.remove('bg-blue-500', 'text-white');
+          kSpan.classList.add('bg-slate-100', 'text-slate-700');
+        }
+      });
+
+      const selectedBtn = document.getElementById(`opt-${qId}-${key}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('bg-white', 'border-slate-200');
+        selectedBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+        const kSpan = selectedBtn.querySelector('.opt-key');
+        if (kSpan) {
+          kSpan.classList.remove('bg-slate-100', 'text-slate-700');
+          kSpan.classList.add('bg-blue-500', 'text-white');
+        }
+      }
+
+      // Update status badge
+      const statusBadge = document.getElementById(`status-badge-${qId}`);
+      if (statusBadge) {
+        statusBadge.textContent = `Đã chọn (${key})`;
+        statusBadge.className = "text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-lg";
+      }
+
+      updateProgress();
+    }
+
+    // Chọn Đúng / Sai Phần II
+    function selectPart2Option(qId, itemKey, isTrue) {
+      if (quizSubmitted) return;
+      userAnswersPart2[`${qId}_${itemKey}`] = isTrue;
+
+      const trueBtn = document.getElementById(`tf-${qId}-${itemKey}-true`);
+      const falseBtn = document.getElementById(`tf-${qId}-${itemKey}-false`);
+
+      if (isTrue) {
+        trueBtn.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs shadow-sm flex items-center gap-1";
+        falseBtn.className = "px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-600 hover:bg-rose-50 transition flex items-center gap-1";
+      } else {
+        falseBtn.className = "px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold text-xs shadow-sm flex items-center gap-1";
+        trueBtn.className = "px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-600 hover:bg-emerald-50 transition flex items-center gap-1";
+      }
+
+      updateProgress();
+    }
+
+    // Cập nhật thanh tiến độ & trạng thái ô navigator
+    function updateProgress() {
+      let count = 0;
+
+      // Part 1 answered count
+      questionsPart1.forEach(q => {
+        const navBtn = document.getElementById(`nav-q${q.id}`);
+        if (userAnswersPart1[q.id]) {
+          count++;
+          if (navBtn) navBtn.className = "h-9 rounded-xl font-bold text-xs bg-blue-600 text-white flex items-center justify-center shadow-sm";
+        }
+      });
+
+      // Part 2 answered count (Tính câu hoàn thành khi chọn đủ 4 ý)
+      questionsPart2.forEach(q => {
+        const navBtn = document.getElementById(`nav-q${q.id}`);
+        const answeredItems = q.items.filter(it => userAnswersPart2[`${q.id}_${it.key}`] !== undefined).length;
+        if (answeredItems === 4) {
+          count++;
+          if (navBtn) navBtn.className = "h-9 rounded-xl font-bold text-xs bg-purple-600 text-white flex items-center justify-center shadow-sm";
+        } else if (answeredItems > 0) {
+          if (navBtn) navBtn.className = "h-9 rounded-xl font-bold text-xs bg-purple-200 text-purple-900 flex items-center justify-center border border-purple-400";
+        }
+      });
+
+      // Update Header Text & Bar
+      document.getElementById('progressCount').textContent = `${count}/20 câu`;
+      document.getElementById('mobileProgressCount').textContent = `${count}/20`;
+      const pct = (count / 20) * 100;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+    }
+
+    // Cuộn tới câu hỏi
+    function scrollToQuestion(id) {
+      const el = document.getElementById(`card-q${id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Quản lý đồng hồ đếm ngược
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        const mins = Math.floor(timeRemaining / 60);
+        const secs = timeRemaining % 60;
+        const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        document.getElementById('timerText').textContent = timeStr;
+        document.getElementById('mobileTimerText').textContent = timeStr;
+
+        // Cảnh báo khi còn dưới 5 phút
+        if (timeRemaining <= 300) {
+          const container = document.getElementById('timerContainer');
+          container.className = "flex items-center gap-2 bg-rose-100 text-rose-700 px-3.5 py-1.5 rounded-xl border border-rose-300 animate-pulse";
+        }
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          showToast("Đã hết thời gian làm bài! Tự động nộp bài...", "warning");
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    // Xác nhận nộp bài
+    function confirmSubmitQuiz() {
+      let unansweredP1 = questionsPart1.filter(q => !userAnswersPart1[q.id]).length;
+      let unansweredP2 = questionsPart2.filter(q => q.items.some(it => userAnswersPart2[`${q.id}_${it.key}`] === undefined)).length;
+
+      let totalUnanswered = unansweredP1 + unansweredP2;
+
+      if (totalUnanswered > 0) {
+        if (confirm(`Bạn còn ${totalUnanswered} câu chưa hoàn thành. Bạn có chắc chắn muốn NỘP BÀI ngay không?`)) {
+          submitQuiz();
+        }
+      } else {
+        if (confirm("Bạn có chắc chắn muốn nộp bài kiểm tra không?")) {
+          submitQuiz();
+        }
+      }
+    }
+
+    // Nộp bài & tính điểm
+    function submitQuiz() {
+      quizSubmitted = true;
+      clearInterval(timerInterval);
+
+      // Tính điểm Phần I (16 câu = 6.0 điểm, 0.375 điểm / câu)
+      let scoreP1 = 0;
+      let p1CorrectCount = 0;
+      questionsPart1.forEach(q => {
+        if (userAnswersPart1[q.id] === q.correct) {
+          scoreP1 += 0.375;
+          p1CorrectCount++;
+        }
+      });
+
+      // Tính điểm Phần II (4 câu = 4.0 điểm. Thuật toán thi THPT Quốc gia: 1 ý đúng = 0.1đ, 2 ý = 0.25đ, 3 ý = 0.5đ, 4 ý = 1.0đ)
+      let scoreP2 = 0;
+      let p2CorrectQuestionsCount = 0;
+
+      questionsPart2.forEach(q => {
+        let correctItemsInQuestion = 0;
+        q.items.forEach(it => {
+          const userAns = userAnswersPart2[`${q.id}_${it.key}`];
+          if (userAns === it.correct) {
+            correctItemsInQuestion++;
+          }
+        });
+
+        if (correctItemsInQuestion === 1) scoreP2 += 0.1;
+        else if (correctItemsInQuestion === 2) scoreP2 += 0.25;
+        else if (correctItemsInQuestion === 3) scoreP2 += 0.5;
+        else if (correctItemsInQuestion === 4) {
+          scoreP2 += 1.0;
+          p2CorrectQuestionsCount++;
+        }
+      });
+
+      const totalScore = Math.min(10.0, Math.round((scoreP1 + scoreP2) * 100) / 100);
+      const totalTimeSpentSec = (30 * 60) - timeRemaining;
+      const minsSpent = Math.floor(totalTimeSpentSec / 60);
+      const secsSpent = totalTimeSpentSec % 60;
+      const timeSpentStr = `${minsSpent} phút ${secsSpent} giây`;
+
+      // Hiển thị dữ liệu modal kết quả
+      document.getElementById('resStudentName').textContent = studentInfo.name;
+      document.getElementById('resStudentClass').textContent = `Lớp: ${studentInfo.class}`;
+      document.getElementById('resTimeSpent').innerHTML = `<i class="fa-solid fa-stopwatch mr-1"></i>Thời gian: ${timeSpentStr}`;
+      document.getElementById('resScoreText').textContent = totalScore.toFixed(2);
+      document.getElementById('resPart1Score').textContent = `${scoreP1.toFixed(2)}/6.0`;
+      document.getElementById('resPart2Score').textContent = `${scoreP2.toFixed(2)}/4.0`;
+      document.getElementById('resCorrectCount').textContent = `${p1CorrectCount + p2CorrectQuestionsCount}/20 câu`;
+
+      // Xếp loại
+      const rankBadge = document.getElementById('resRankBadge');
+      if (totalScore >= 9.0) {
+        rankBadge.textContent = "Xuất Sắc";
+        rankBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
+      } else if (totalScore >= 8.0) {
+        rankBadge.textContent = "Giỏi";
+        rankBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+      } else if (totalScore >= 6.5) {
+        rankBadge.textContent = "Khá";
+        rankBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300";
+      } else if (totalScore >= 5.0) {
+        rankBadge.textContent = "Trung Bình";
+        rankBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-800";
+      } else {
+        rankBadge.textContent = "Cần Cố Gắng";
+        rankBadge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300";
+      }
+
+      // Render chi tiết lời giải
+      renderDetailedReview();
+
+      // Hiện Modal Kết quả
+      document.getElementById('resultModal').classList.remove('hidden');
+    }
+
+    // Render xem lại chi tiết bài làm & lời giải
+    function renderDetailedReview() {
+      const container = document.getElementById('detailReviewContainer');
+
+      let html = `<div class="space-y-6">`;
+
+      // PHẦN I REVIEW
+      html += `<h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2 text-sm uppercase tracking-wide text-blue-600">PHẦN I: TRẮC NGHIỆM KHÁCH QUAN</h4>`;
+      questionsPart1.forEach(q => {
+        const userAns = userAnswersPart1[q.id] || "Chưa chọn";
+        const isCorrect = userAns === q.correct;
+
+        html += `
+          <div class="p-4 rounded-2xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'} space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <span class="font-bold text-sm text-slate-900">Câu ${q.id}: ${escapeHtml(q.text)}</span>
+              <span class="text-xs font-bold px-2 py-0.5 rounded ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${isCorrect ? '<i class="fa-solid fa-check mr-1"></i>Đúng (+0.375đ)' : '<i class="fa-solid fa-xmark mr-1"></i>Sai (0đ)'}
+              </span>
+            </div>
+
+            <div class="text-xs space-y-1 font-medium">
+              <div>Đã chọn: <strong class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userAns}</strong> | Đáp án đúng: <strong class="text-emerald-700">${q.correct}</strong></div>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl text-xs text-slate-700 border border-slate-200 space-y-1 mt-2">
+              <div class="font-bold text-slate-900 flex items-center gap-1">
+                <i class="fa-solid fa-lightbulb text-amber-500"></i> Lời giải chi tiết:
+              </div>
+              <p>${escapeHtml(q.explain)}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      // PHẦN II REVIEW
+      html += `<h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2 text-sm uppercase tracking-wide text-purple-600 pt-4">PHẦN II: ĐÚNG / SAI</h4>`;
+      questionsPart2.forEach(q => {
+        html += `
+          <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3">
+            <div class="font-bold text-sm text-slate-900">${escapeHtml(q.title)}</div>
+            <div class="space-y-2">
+        `;
+
+        q.items.forEach(it => {
+          const userAns = userAnswersPart2[`${q.id}_${it.key}`];
+          const userAnsText = userAns === true ? "Đúng" : userAns === false ? "Sai" : "Chưa chọn";
+          const correctText = it.correct ? "Đúng" : "Sai";
+          const isCorrect = userAns === it.correct;
+
+          html += `
+            <div class="p-3 rounded-xl bg-white border ${isCorrect ? 'border-emerald-200' : 'border-rose-200'} text-xs space-y-1">
+              <div class="flex items-start justify-between gap-2 font-medium">
+                <span><strong>${it.key})</strong> ${escapeHtml(it.text)}</span>
+                <span class="font-bold ${isCorrect ? 'text-emerald-600' : 'text-rose-600'} shrink-0">
+                  ${isCorrect ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-xmark"></i>'}
+                </span>
+              </div>
+              <div class="text-slate-500 font-medium">
+                Em chọn: <strong class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userAnsText}</strong> | Đáp án đúng: <strong class="text-emerald-700">${correctText}</strong>
+              </div>
+              <div class="text-slate-600 bg-slate-50 p-2 rounded-lg mt-1 italic">
+                <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>${escapeHtml(it.explain)}
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div></div>`;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    // Chức năng sao chép kết quả gửi giáo viên
+    function copyResultsToClipboard() {
+      const scoreText = document.getElementById('resScoreText').textContent;
+      const rankText = document.getElementById('resRankBadge').textContent;
+      const timeText = document.getElementById('resTimeSpent').textContent.replace('Thời gian: ', '');
+
+      const textToCopy = `KẾT QUẢ BÀI KIỂM TRA TIN HỌC 12
+----------------------------------
+Bài 9: Tạo Danh Sách & Bảng (HTML)
+Họ và tên: ${studentInfo.name}
+Lớp: ${studentInfo.class}
+ĐIỂM SỐ: ${scoreText} / 10.0
+Xếp loại: ${rankText}
+Thời gian làm bài: ${timeText}
+----------------------------------
+Gửi từ Hệ thống Trắc nghiệm Trực tuyến Tin học 12`;
+
+      // Copy text to clipboard
+      const tempInput = document.createElement('textarea');
+      tempInput.value = textToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showToast("Đã sao chép kết quả vào bộ nhớ tạm! Có thể dán gửi Zalo/Messenger.", "success");
+    }
+
+    // Làm lại bài kiểm tra
+    function retakeQuiz() {
+      if (confirm("Bạn có chắc muốn làm lại bài kiểm tra từ đầu?")) {
+        userAnswersPart1 = {};
+        userAnswersPart2 = {};
+        timeRemaining = 30 * 60;
+        quizSubmitted = false;
+
+        document.getElementById('resultModal').classList.add('hidden');
+        renderPart1();
+        renderPart2();
+        renderNavGrid();
+        updateProgress();
+        startTimer();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showToast("Đã làm mới bài kiểm tra. Bắt đầu tính giờ!", "info");
+      }
+    }
+
+    // Toast notification helper
+    function showToast(msg, type = "success") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = msg;
+      if (type === "success") {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+      } else if (type === "error") {
+        toastIcon.className = "fa-solid fa-circle-xmark text-rose-400";
+      } else if (type === "warning") {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-blue-400";
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    // Utility escape HTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
